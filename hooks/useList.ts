@@ -1,13 +1,38 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Tables } from "@/types";
-import { fetchListById } from "@/lib/lists";
+import { createList, fetchListById, updateList } from "@/lib/lists";
 
 export function useList(listId: string) {
   return useQuery<Tables<"lists">>({
     queryKey: ["list", listId],
     queryFn: () => fetchListById(listId),
     enabled: !!listId,
+  });
+}
+
+export function useCreateList() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: createList,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["lists"] });
+    },
+  });
+}
+
+export function useUpdateList() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ listId, updates }: { listId: string; updates: { name?: string } }) =>
+      updateList(listId, updates),
+    onSuccess: (_, { listId }) => {
+      // Invalidate the list query to refresh the data
+      queryClient.invalidateQueries({ queryKey: ["list", listId] });
+      queryClient.invalidateQueries({ queryKey: ["lists"] });
+    },
   });
 }

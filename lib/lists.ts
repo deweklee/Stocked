@@ -7,7 +7,6 @@ export async function fetchLists(): Promise<Tables<"lists">[]> {
   const { data, error } = await supabase
     .from("lists")
     .select("*");
-  console.log("test", error)
   if (error) throw error;
   
   return data ?? [];
@@ -22,6 +21,40 @@ export async function fetchListById(
     .from("lists")
     .select("*")
     .eq("id", listId)
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+export async function createList(name: string = "Untitled List") {
+  const supabase = createClient();
+
+  // Get current user
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) throw new Error("Not authenticated");
+
+  const { data, error } = await supabase
+    .from("lists")
+    .insert([{ name, owner_id: user.id }])
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+export async function updateList(listId: string, updates: { name?: string }) {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("lists")
+    .update(updates)
+    .eq("id", listId)
+    .select()
     .single();
 
   if (error) throw error;
