@@ -1,7 +1,7 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
-import { fetchAllIngredients, fetchCustomIngredients } from "@/lib/ingredients";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { createCustomIngredient, fetchAllIngredients, fetchCustomIngredients } from "@/lib/ingredients";
 import { Tables } from "@/types";
 
 export function useIngredients() {
@@ -20,5 +20,16 @@ export function useCustomIngredients() {
     queryFn: fetchCustomIngredients,
     staleTime: 1000 * 60,
     retry: 1,
+  });
+}
+
+export function useCreateCustomIngredient() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: createCustomIngredient,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["custom-ingredients"] });
+    },
   });
 }
