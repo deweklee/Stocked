@@ -29,26 +29,20 @@ export function AddListItem({ onAdd }: Props) {
   }
 
   const ingredientOptions: IngredientOption[] = [
-    ...(ingredients
-      ?.filter((i) => i.name)
-      .map((i) => ({
-        value: i.id,
-        label: i.name!,
-        isCustom: false,
-      })) ?? []),
-
-    ...(customIngredients
-      ?.filter((i) => i.name)
-      .map((i) => ({
-        value: i.id,
-        label: `${i.name!} (Custom)`,
-        isCustom: true,
-      })) ?? []),
+    ...(ingredients ?? []).map((i) => ({
+      value: i.id,
+      label: i.name!,
+      isCustom: false,
+    })),
+    ...(customIngredients ?? []).map((i) => ({
+      value: i.id,
+      label: `${i.name!} (Custom)`,
+      isCustom: true,
+    })),
   ];
 
   async function handleAdd() {
     if (!selectedOption) return;
-
     await onAdd(selectedOption);
     setSelectedOption(null);
   }

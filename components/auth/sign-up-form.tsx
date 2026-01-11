@@ -44,7 +44,7 @@ export function SignUpForm({
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/ingredients`,
+          emailRedirectTo: `${window.location.origin}/lists`,
         },
       });
       if (error) throw error;

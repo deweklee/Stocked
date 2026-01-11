@@ -4,6 +4,8 @@ import { useCreateList } from "@/hooks/useList";
 import { useLists } from "@/hooks/useLists";
 import { useRouter } from "next/navigation";
 
+import { IncomingShares } from "./IncomingShares";
+
 export function ListsView() {
   const { data: lists, isLoading, error } = useLists();
   const createListMutation = useCreateList();
@@ -23,6 +25,9 @@ export function ListsView() {
 
   return (
     <div>
+      {/* Incoming Invites */}
+      <IncomingShares />
+
       {/* Add List Button */}
       <button
         onClick={handleAddList}
@@ -31,7 +36,9 @@ export function ListsView() {
         + Add List
       </button>
 
-      {(!lists || lists.length === 0) && <div>No lists yet</div>}
+      {(!lists || lists.length === 0) && (
+        <div className="text-gray-400">No lists yet</div>
+      )}
 
       <ul className="space-y-2">
         {lists?.map((list) => (
@@ -40,9 +47,7 @@ export function ListsView() {
             className="border rounded p-3 flex justify-between cursor-pointer hover:bg-gray-100"
             onClick={() => router.push(`/lists/${list.id}`)}
           >
-            <span>
-              {list.name}, id: {list.id}, created at {list.created_at}
-            </span>
+            <span>{list.name}</span>
 
             {list.is_public && (
               <span className="text-sm text-gray-500">Public</span>

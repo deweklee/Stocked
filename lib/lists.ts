@@ -47,7 +47,7 @@ export async function createList(name: string = "Untitled List") {
   return data;
 }
 
-export async function updateList(listId: string, updates: { name?: string }) {
+export async function updateList(listId: string, updates: { name?: string; is_public?: boolean}) {
   const supabase = createClient();
 
   const { data, error } = await supabase
@@ -59,4 +59,15 @@ export async function updateList(listId: string, updates: { name?: string }) {
 
   if (error) throw error;
   return data;
+}
+
+export async function deleteList(listId: string) {
+  const supabase = createClient();
+
+  const { error } = await supabase
+    .from("lists")
+    .delete()
+    .eq("id", listId);
+
+  if (error) throw error;
 }

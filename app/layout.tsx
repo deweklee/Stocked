@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { QueryProvider } from "@/components/providers/QueryProvider";
+import { NavBar } from "@/components/NavBar";
 import "./globals.css";
 
 const defaultUrl = process.env.VERCEL_URL
@@ -34,7 +35,10 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <QueryProvider>{children}</QueryProvider>
+          <QueryProvider>
+            <NavBar />
+            {children}
+          </QueryProvider>
         </ThemeProvider>
       </body>
     </html>

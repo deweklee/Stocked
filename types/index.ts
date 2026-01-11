@@ -1,3 +1,8 @@
+export type IngredientOption = {
+  value: string;
+  label: string;
+  isCustom: boolean;
+};
 export type Json =
   | string
   | number
@@ -5,13 +10,6 @@ export type Json =
   | null
   | { [key: string]: Json | undefined }
   | Json[]
-
-  
-export type IngredientOption = {
-  value: string;
-  label: string;
-  isCustom: boolean;
-};
 
 export type Database = {
   // Allows to automatically instantiate createClient with right options
@@ -49,7 +47,7 @@ export type Database = {
           created_at?: string
           id?: string
           name: string
-          user_id: string
+          user_id?: string
         }
         Update: {
           category_id?: string | null
@@ -106,7 +104,6 @@ export type Database = {
           ingredient_id: string | null
           list_id: string
           quantity: number | null
-          unit: Database["public"]["Enums"]["unit"] | null
         }
         Insert: {
           checked?: boolean | null
@@ -116,7 +113,6 @@ export type Database = {
           ingredient_id?: string | null
           list_id: string
           quantity?: number | null
-          unit?: Database["public"]["Enums"]["unit"] | null
         }
         Update: {
           checked?: boolean | null
@@ -126,7 +122,6 @@ export type Database = {
           ingredient_id?: string | null
           list_id?: string
           quantity?: number | null
-          unit?: Database["public"]["Enums"]["unit"] | null
         }
         Relationships: [
           {
@@ -152,26 +147,67 @@ export type Database = {
           },
         ]
       }
+      list_shares: {
+        Row: {
+          created_at: string | null
+          email: string
+          id: string
+          invited_id: string | null
+          inviter_email: string | null
+          list_id: string | null
+          role: Database["public"]["Enums"]["role"]
+          status: Database["public"]["Enums"]["shared status"]
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          id?: string
+          invited_id?: string | null
+          inviter_email?: string | null
+          list_id?: string | null
+          role?: Database["public"]["Enums"]["role"]
+          status?: Database["public"]["Enums"]["shared status"]
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          id?: string
+          invited_id?: string | null
+          inviter_email?: string | null
+          list_id?: string | null
+          role?: Database["public"]["Enums"]["role"]
+          status?: Database["public"]["Enums"]["shared status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "list_shares_list_id_fkey"
+            columns: ["list_id"]
+            isOneToOne: false
+            referencedRelation: "lists"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       list_users: {
         Row: {
           created_at: string | null
           id: string
           list_id: string
-          role: string
+          role: Database["public"]["Enums"]["role"]
           user_id: string
         }
         Insert: {
           created_at?: string | null
           id?: string
           list_id: string
-          role: string
+          role?: Database["public"]["Enums"]["role"]
           user_id: string
         }
         Update: {
           created_at?: string | null
           id?: string
           list_id?: string
-          role?: string
+          role?: Database["public"]["Enums"]["role"]
           user_id?: string
         }
         Relationships: [
@@ -190,32 +226,55 @@ export type Database = {
           id: string
           is_public: boolean
           name: string
-          owner_id: string | null
+          owner_id: string
         }
         Insert: {
           created_at?: string
           id?: string
           is_public?: boolean
           name?: string
-          owner_id?: string | null
+          owner_id?: string
         }
         Update: {
           created_at?: string
           id?: string
           is_public?: boolean
           name?: string
-          owner_id?: string | null
+          owner_id?: string
         }
         Relationships: []
       }
     }
     Views: {
-      [_ in never]: never
+      incoming_list_shares: {
+        Row: {
+          created_at: string | null
+          invitee_email: string | null
+          inviter_email: string | null
+          list_id: string | null
+          list_name: string | null
+          owner_id: string | null
+          role: Database["public"]["Enums"]["role"] | null
+          share_id: string | null
+          status: Database["public"]["Enums"]["shared status"] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "list_shares_list_id_fkey"
+            columns: ["list_id"]
+            isOneToOne: false
+            referencedRelation: "lists"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       [_ in never]: never
     }
     Enums: {
+      role: "editor" | "viewer" | "owner"
+      "shared status": "pending" | "accepted" | "declined"
       unit: "cup" | "gram" | "pound"
     }
     CompositeTypes: {
@@ -344,6 +403,8 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      role: ["editor", "viewer", "owner"],
+      "shared status": ["pending", "accepted", "declined"],
       unit: ["cup", "gram", "pound"],
     },
   },

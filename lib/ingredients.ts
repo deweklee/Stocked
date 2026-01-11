@@ -10,13 +10,26 @@ export async function fetchAllIngredients(): Promise<Tables<"ingredients">[]> {
 
 export async function fetchCustomIngredients(): Promise<Tables<"custom_ingredients">[]> {
   const supabase = createClient();
+
+  // Get the current user
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError) throw userError;
+  if (!user) return [];
+
+  // Fetch only custom ingredients created by this user
   const { data, error } = await supabase
     .from("custom_ingredients")
-    .select("*");
+    .select("*")
+    .eq("user_id", user.id);
 
   if (error) throw error;
   return data ?? [];
 }
+
 
 export async function createCustomIngredient(name: string) {
   const supabase = createClient();
