@@ -121,7 +121,7 @@ export function ListShareModal({ listId, open, onClose }: Props) {
               No pending invites
             </div>
           ) : (
-            pendingShares.map((s) => (
+            pendingShares!.map((s) => (
               <div
                 key={s.id}
                 className="flex flex-col md:flex-row md:items-center justify-between gap-2 p-3 border rounded-lg bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
@@ -165,7 +165,7 @@ export function ListShareModal({ listId, open, onClose }: Props) {
               No users have accepted
             </div>
           ) : (
-            acceptedUsers.map((u) => (
+            acceptedUsers!.map((u) => (
               <div
                 key={u.user_id}
                 className="flex flex-col md:flex-row md:items-center justify-between gap-2 p-3 border rounded-lg bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
