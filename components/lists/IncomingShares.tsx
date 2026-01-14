@@ -25,41 +25,53 @@ export function IncomingShares() {
   }
 
   async function handleDecline(shareId: string) {
-    // You can either:
-    // 1. delete the share row
-    // 2. OR update status = "declined"
-    // Deleting keeps things simpler
     await deleteShare.mutateAsync(shareId);
     refetch();
   }
 
   return (
-    <div className="mb-6 border rounded p-4 bg-white">
-      <h2 className="font-semibold mb-3">Pending Invites</h2>
+    <div className="mb-6 border rounded-lg p-4 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+      <h2 className="font-semibold mb-3 text-lg">Pending Invites</h2>
 
       <ul className="space-y-3">
         {shares.map((share) => (
           <li
             key={share.id}
-            className="flex items-center justify-between border rounded p-2"
+            className="
+              flex items-center justify-between gap-4
+              border rounded-lg p-3
+              bg-gray-50 dark:bg-gray-800
+              hover:bg-gray-100 dark:hover:bg-gray-700
+              transition
+            "
           >
             <div>
               <div className="font-medium">{share.list_name}</div>
-              <div className="text-sm text-gray-500">
-                Invited by {share.inviter_email} · Role: {share.role}
+
+              <div className="text-sm text-gray-600 dark:text-gray-400">
+                Invited by {share.inviter_email} · Role:{" "}
+                <span className="capitalize">{share.role}</span>
               </div>
             </div>
 
-            <div className="flex gap-2">
+            <div className="flex gap-2 shrink-0">
               <button
                 onClick={() => handleAccept(share.id)}
-                className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+                className="
+                  bg-blue-600 text-white px-3 py-1 rounded
+                  hover:bg-blue-700 transition
+                "
               >
                 Accept
               </button>
+
               <button
                 onClick={() => handleDecline(share.id)}
-                className="bg-gray-300 px-3 py-1 rounded hover:bg-gray-400"
+                className="
+                  bg-gray-300 text-gray-900 px-3 py-1 rounded
+                  hover:bg-gray-400 transition
+                  dark:bg-gray-600 dark:text-gray-100 dark:hover:bg-gray-500
+                "
               >
                 Decline
               </button>

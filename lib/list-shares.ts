@@ -94,7 +94,6 @@ export async function updateListShare(
 // Delete a share
 export async function deleteListShare(shareId: string): Promise<void> {
   const supabase = createClient();
-
   const { error } = await supabase
     .from("list_shares")
     .delete()

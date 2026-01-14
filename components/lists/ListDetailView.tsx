@@ -38,7 +38,7 @@ export function ListDetailView({ listId }: { listId: string }) {
   const canEditItems = isOwner || isEditor;
 
   useEffect(() => {
-    console.log("list:", list);
+    if (!list) return;
     if (list) setNewName(list.name);
   }, [list]);
 
@@ -77,33 +77,31 @@ export function ListDetailView({ listId }: { listId: string }) {
     if (!list) return;
     await addItem.mutateAsync(
       option.isCustom
-        ? {
-            list_id: list.id,
-            custom_ingredient_id: option.value,
-          }
-        : {
-            list_id: list.id,
-            ingredient_id: option.value,
-          }
+        ? { list_id: list.id, custom_ingredient_id: option.value }
+        : { list_id: list.id, ingredient_id: option.value }
     );
   }
 
   return (
-    <div>
+    <div className="space-y-6 px-2 sm:px-0 text-gray-900 dark:text-gray-100">
       {/* Header */}
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex justify-between items-center">
         <button
           onClick={() => router.push("/lists")}
-          className="text-blue-500 hover:underline"
+          className="text-blue-600 dark:text-blue-400 hover:underline"
         >
-          &larr; Back to Lists
+          ← Back to Lists
         </button>
 
         <div className="flex gap-2">
           {isOwner && (
             <button
               onClick={() => setIsShareModalOpen(true)}
-              className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600"
+              className="
+                px-3 py-1 rounded
+                bg-green-600 text-white
+                hover:bg-green-700 transition
+              "
             >
               Share / Manage Access
             </button>
@@ -112,7 +110,7 @@ export function ListDetailView({ listId }: { listId: string }) {
           {isOwner && (
             <button
               onClick={() => setShowDeleteModal(true)}
-              className="text-red-600 hover:underline text-sm"
+              className="text-sm text-red-600 hover:underline"
             >
               Delete List
             </button>
@@ -120,66 +118,88 @@ export function ListDetailView({ listId }: { listId: string }) {
         </div>
       </div>
 
-      {/* List Name */}
-      <div className="mb-4">
-        {isEditingName && isOwner ? (
-          <div className="flex gap-2">
-            <input
-              type="text"
-              value={newName}
-              onChange={(e) => setNewName(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleSaveName()}
-              className="border p-1 rounded flex-1"
-              autoFocus
-            />
-            <button
-              onClick={handleSaveName}
-              className="bg-blue-500 text-white px-3 rounded hover:bg-blue-600"
+      {/* List Card */}
+      <div className="border rounded-lg p-4 bg-white dark:bg-gray-900">
+        {/* List Name */}
+        <div className="mb-4">
+          {isEditingName && isOwner ? (
+            <div className="flex gap-2">
+              <input
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleSaveName()}
+                className="
+                  border rounded px-2 py-1 flex-1
+                  bg-white dark:bg-gray-800
+                  text-gray-900 dark:text-gray-100
+                "
+                autoFocus
+              />
+
+              <button
+                onClick={handleSaveName}
+                className="bg-blue-600 text-white px-3 rounded hover:bg-blue-700"
+              >
+                Save
+              </button>
+
+              <button
+                onClick={() => {
+                  setIsEditingName(false);
+                  setNewName(list.name);
+                }}
+                className="
+                  bg-gray-300 text-gray-900 px-3 rounded
+                  hover:bg-gray-400
+                  dark:bg-gray-600 dark:text-gray-100 dark:hover:bg-gray-500
+                "
+              >
+                Cancel
+              </button>
+            </div>
+          ) : (
+            <h1
+              className={`text-2xl font-semibold ${
+                isOwner ? "cursor-pointer hover:underline" : ""
+              }`}
+              onClick={() => isOwner && setIsEditingName(true)}
             >
-              Save
-            </button>
-            <button
-              onClick={() => {
-                setIsEditingName(false);
-                setNewName(list.name);
-              }}
-              className="bg-gray-300 px-3 rounded hover:bg-gray-400"
-            >
-              Cancel
-            </button>
+              {list.name}
+            </h1>
+          )}
+
+          {list.is_public && (
+            <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+              Public list
+            </div>
+          )}
+        </div>
+
+        {/* Items */}
+        {canViewItems && (
+          <ul className="space-y-2">
+            {items?.map((item) => (
+              <ListItemRow
+                key={item.id}
+                item={item}
+                canRemove={canEditItems}
+                canToggle={canToggleItems}
+              />
+            ))}
+          </ul>
+        )}
+
+        {items?.length === 0 && (
+          <div className="text-gray-400 mt-2">No items yet</div>
+        )}
+
+        {/* Add Item */}
+        {canEditItems && (
+          <div className="mt-4">
+            <AddListItem onAdd={handleAddItem} />
           </div>
-        ) : (
-          <h1
-            className={`text-2xl font-semibold ${
-              isOwner ? "cursor-pointer" : ""
-            }`}
-            onClick={() => isOwner && setIsEditingName(true)}
-          >
-            {list.name}
-          </h1>
         )}
       </div>
-
-      {/* List Items */}
-      {canViewItems && (
-        <ul className="space-y-2">
-          {items?.map((item) => (
-            <ListItemRow
-              key={item.id}
-              item={item}
-              canRemove={canEditItems}
-              canToggle={canToggleItems}
-            />
-          ))}
-        </ul>
-      )}
-
-      {items?.length === 0 && (
-        <div className="text-gray-400 mt-2">No items yet</div>
-      )}
-
-      {/* Add Item */}
-      {canEditItems && <AddListItem onAdd={handleAddItem} />}
 
       {/* Modals */}
       <ConfirmModal
