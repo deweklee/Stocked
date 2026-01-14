@@ -26,7 +26,6 @@ export async function fetchMyRoleForList(
     .eq("user_id", user.id)
     .single();
 
-  console.log('user role: ', data?.role)
   if (error) return null;
   return data.role;
 }
@@ -41,7 +40,6 @@ export async function updateListUserRole({
   role: "viewer" | "editor" | "owner";
 }): Promise<void> {
   const supabase = createClient();
-  console.log("updating list_users", listId, userId, role)
   const { error } = await supabase
     .from("list_users")
     .update({ role })

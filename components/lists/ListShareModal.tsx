@@ -42,10 +42,6 @@ export function ListShareModal({ listId, open, onClose }: Props) {
 
   const [inviteEmail, setInviteEmail] = useState("");
 
-  useEffect(() => {
-    console.log("acceptedUsers:", acceptedUsers);
-  }, [acceptedUsers]);
-
   if (listLoading || sharesLoading || usersLoading) return null;
 
   async function handleAddShare() {

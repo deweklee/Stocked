@@ -80,8 +80,6 @@ export async function updateListShare(
     updates.invited_id = user.id;
   }
   
-  console.log("shareId: ", shareId)
-  console.log("updating list share, updates:", updates)
   const { error } = await supabase
     .from("list_shares")
     .update(updates)
@@ -124,7 +122,6 @@ export async function fetchMyIncomingShares(): Promise<ShareRequest[]> {
     `)
     .eq("email", user.email)
     .eq("status", "pending");
-  console.log("incoming shares", data)
   if (error) throw error;
 
   return (
